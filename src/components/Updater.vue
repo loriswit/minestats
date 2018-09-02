@@ -21,7 +21,7 @@
         methods: {
             update: function()
             {
-                const url = "http://" + this.$root.server;
+                const url = "https://" + this.$root.server;
                 this.$http.get(url + "/usercache.json").then(response =>
                 {
                     const users = response.body;
