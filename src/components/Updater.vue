@@ -1,8 +1,10 @@
 <template>
     <div class="updater">
-        <button @click="update()">Update now</button>
+        <button @click="update()">update now</button>
         <p v-if="error" class="error">{{ error }}</p>
-        <p v-if="date">updated <timeago :datetime="date" :auto-update="true"></timeago></p>
+        <p v-if="date">updated
+            <timeago :datetime="date" :auto-update="true"></timeago>
+        </p>
     </div>
 </template>
 

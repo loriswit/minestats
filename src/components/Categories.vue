@@ -1,8 +1,8 @@
 <template>
     <nav>
-        <button v-for="link in links"
-                @click="$root.category = link"
-                :class="{ active: $root.category === link }">{{ link }}
+        <button v-for="(name, category) in categories"
+                @click="$root.category = category"
+                :class="{ active: $root.category === category }">{{ name }}
         </button>
     </nav>
 </template>
@@ -13,17 +13,17 @@
         data: function()
         {
             return {
-                links: [
-                    "minecraft:custom",
-                    "minecraft:killed",
-                    "minecraft:killed_by",
-                    "minecraft:mined",
-                    "minecraft:crafted",
-                    "minecraft:used",
-                    "minecraft:broken",
-                    "minecraft:dropped",
-                    "minecraft:picked_up"
-                ]
+                categories: {
+                    "minecraft:custom": "custom",
+                    "minecraft:killed": "mobs killed",
+                    "minecraft:killed_by": "killed by mobs",
+                    "minecraft:mined": "mined",
+                    "minecraft:crafted": "crafted",
+                    "minecraft:used": "used",
+                    "minecraft:broken": "broken",
+                    "minecraft:dropped": "dropped",
+                    "minecraft:picked_up": "picked up"
+                }
             };
         },
     }

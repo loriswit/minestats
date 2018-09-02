@@ -10,11 +10,11 @@
         </thead>
         <tbody>
         <tr v-for="(item, key) in stats">
-            <th :class="{ total: key === 'total' }">{{ key }}</th>
-            <td class="total">{{ format(key, item.total) }}</td>
+            <th :class="{ total: key === 'total' }">{{ formatKey(key) }}</th>
+            <td class="total">{{ formatValue(key, item.total) }}</td>
             <td :class="{ null: item[user.uuid] === 0, total: key === 'total' }"
                 v-for="user in users">
-                {{ format(key, item[user.uuid]) }}
+                {{ formatValue(key, item[user.uuid]) }}
             </td>
         </tr>
         </tbody>
@@ -74,7 +74,14 @@
         },
 
         methods: {
-            format(key, value)
+            formatKey: function(key)
+            {
+                return key.replace("minecraft:", "")
+                    .replace("one_cm", "distance")
+                    .replace("one_minute", "time")
+                    .replace(/_/g, " ");
+            },
+            formatValue: function(key, value)
             {
                 switch(key)
                 {
