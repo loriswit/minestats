@@ -3,7 +3,7 @@
         <button @click="update()">update now</button>
         <p v-if="error" class="error">{{ error }}</p>
         <p v-if="date">updated
-            <timeago :datetime="date" :auto-update="true"></timeago>
+            <timeago :datetime="date" :auto-update="true"/>
         </p>
     </div>
 </template>
@@ -62,6 +62,7 @@
     .updater
     {
         padding: 20px;
+        width: 300px;
         text-align: center;
     }
 

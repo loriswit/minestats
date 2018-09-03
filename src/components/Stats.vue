@@ -90,11 +90,11 @@
                     case "minecraft:sneak_time":
                     case "minecraft:time_since_rest":
                         if(value < 1200)
-                            return Math.floor(value / 20 % 60) + " seconds";
+                            return Math.floor(value / 20 % 60) + " sec";
                         else if(value < 72000)
-                            return Math.floor(value / 20 / 60 % 60) + " minutes";
+                            return Math.floor(value / 1200 % 60) + " min";
                         else
-                            return Math.floor(value / 20 / 60 / 60) + " hours";
+                            return Math.floor(value / 72000) + " hrs";
 
                     case "minecraft:sprint_one_cm":
                     case "minecraft:walk_one_cm":
@@ -110,11 +110,17 @@
                             return value + " cm";
                         else if(value < 100000)
                             return (value / 100).toFixed(1) + " m";
+                        else if(value < 100000000)
+                            return (value / 100000).toFixed(1).toLocaleString() + " km";
                         else
-                            return (value / 100000).toFixed(1) + " km";
+                            return Math.floor(value / 100000).toLocaleString() + " km";
+
+                    case "minecraft:damage_dealt":
+                    case "minecraft:damage_taken":
+                        return Math.floor(value / 20).toLocaleString() + " ♡";
 
                     default:
-                        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                        return value.toLocaleString();
                 }
             }
         }
