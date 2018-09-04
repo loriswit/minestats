@@ -24,30 +24,38 @@
             update: function()
             {
                 const url = "https://" + this.$root.server;
-                this.$http.get(url + "/usercache.json").then(response =>
+                this.$http.get(url + "/status").then(response =>
                 {
-                    const users = response.body;
-                    let index = 0;
-                    for(let user of users)
-                        this.$http.get(url + "/world/stats/" + user.uuid + ".json").then(response =>
-                        {
-                            user.stats = response.body.stats;
-                            if(++index === users.length)
-                            {
-                                this.error = "";
-                                this.date = Date.now();
-                                this.$root.users = users;
+                    let onlinePlayers = [];
+                    if(response.body.status === "online")
+                        if(response.body.info.players.online > 0)
+                            for(let player of response.body.info.players.sample)
+                                onlinePlayers.push(player.id);
 
-                                window.localStorage.setItem("users", JSON.stringify(this.$root.users));
-                                window.localStorage.setItem("date", this.date.toString());
-                            }
-                        }, () =>
-                        {
-                            this.error = "Update failed.";
-                        });
+                    this.$http.get(url + "/users").then(response =>
+                    {
+                        const users = response.body;
+                        let index = 0;
+                        for(let user of users)
+                            this.$http.get(url + "/stats/" + user.uuid).then(response =>
+                            {
+                                user.online = onlinePlayers.includes(user.uuid);
+                                user.stats = response.body.stats;
+
+                                if(++index === users.length)
+                                {
+                                    this.error = "";
+                                    this.date = Date.now();
+                                    this.$root.users = users;
+
+                                    window.localStorage.setItem("users", JSON.stringify(this.$root.users));
+                                    window.localStorage.setItem("date", this.date.toString());
+                                }
+                            });
+                    });
                 }, () =>
                 {
-                    this.error = "Update failed.";
+                    this.error = "update failed.";
                 });
             }
         },

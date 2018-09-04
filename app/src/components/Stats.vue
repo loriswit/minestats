@@ -5,7 +5,10 @@
         <tr>
             <td class="empty"></td>
             <th class="total">total</th>
-            <th v-for="user in users">{{ user.name }}</th>
+            <th v-for="user in users">
+                {{ user.name }}
+                <span v-if="user.online" class="online" title="online"></span>
+            </th>
         </tr>
         </thead>
         <tbody>
@@ -164,5 +167,15 @@
     th, td
     {
         padding: 10px;
+    }
+
+    .online
+    {
+        margin-left: 8px;
+        height: 10px;
+        width: 10px;
+        background-color: lightgreen;
+        border-radius: 50%;
+        display: inline-block;
     }
 </style>
