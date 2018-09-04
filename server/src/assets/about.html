@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name=viewport content="width=device-width,initial-scale=1">
+    <title>minestats/server</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            text-align: center;
+        }
+        main {
+            display: inline-block;
+        }
+        h2 {
+            text-align: left;
+            padding-left: 10px;
+        }
+        table {
+            text-align: left;
+            border-collapse: separate;
+            border-spacing: 2px;
+        }
+        td {
+            vertical-align: center;
+            background-color: whitesmoke;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <h1>minestats/server</h1>
+    <main>
+        <section>
+            <h2>API</h2>
+            <table>
+                <tr>
+                    <td><code>GET /status</code></td>
+                    <td>get the server status</td>
+                </tr>
+                <tr>
+                    <td><code>GET /logs</code></td>
+                    <td>get the latest logs</td>
+                </tr>
+                <tr>
+                    <td><code>GET /users</code></td>
+                    <td>get a list of all players</td>
+                </tr>
+                <tr>
+                    <td><code>GET /stats/{uuid}</code></td>
+                    <td>get the statistics of a specific player</td>
+                </tr>
+                <tr>
+                    <td><code>GET /advancements/{uuid}</code></td>
+                    <td>get the advancements of a specific player</td>
+                </tr>
+            </table>
+        </section>
+        <br>
+        <section>
+            <h2>links</h2>
+            <table>
+                <tr>
+                    <td>repository</td>
+                    <td><a href="https://github.com/olybri/minestats">olybri/minestats</a></td>
+                </tr>
+                <tr>
+                    <td>demo</td>
+                    <td><a href="https://olybri.github.io/minesport">minesport</a></td>
+                </tr>
+            </table>
+        </section>
+    </main>
+</div>
+</body>
+</html>
