@@ -4,20 +4,50 @@
         <thead>
         <tr>
             <td class="empty"></td>
-            <th class="total">total</th>
-            <th v-for="user in users">
+            <th :class="{ sorted: sortingUser === 'total' && userSortable, sortable: userSortable }"
+                @click="sortingUser = 'total'">
+                total
+            </th>
+            <td class="h-space"></td>
+            <th v-for="user in stats.total.users" :title="user.online ? 'online' : null"
+                :class="{ sorted: sortingUser === user.uuid && userSortable, sortable: userSortable }"
+                @click="sortingUser = user.uuid">
                 {{ user.name }}
-                <span v-if="user.online" class="online" title="online"></span>
+                <span v-if="user.online" class="online"></span>
             </th>
         </tr>
         </thead>
         <tbody>
-        <tr v-for="(item, key) in stats">
-            <th :class="{ total: key === 'total' }">{{ formatKey(key) }}</th>
-            <td class="total">{{ formatValue(key, item.total) }}</td>
-            <td :class="{ null: item[user.uuid] === 0, total: key === 'total' }"
-                v-for="user in users">
-                {{ formatValue(key, item[user.uuid]) }}
+        <tr>
+            <th :class="{ sorted: sortingItem === 'total' }"
+                @click="sortingItem = 'total'"
+                class="sortable">
+                {{ formatItem(stats.total.name) }}
+            </th>
+            <td :class="{ sorted: (sortingUser === 'total' && userSortable) || sortingItem === 'total' }">
+                {{ formatValue(stats.total.name, stats.total.total) }}
+            </td>
+            <td class="h-space"></td>
+            <td v-for="user in stats.total.users"
+                :class="{ sorted: (sortingUser === user.uuid && userSortable) || sortingItem === 'total' }">
+                {{ formatValue(stats.total.name, user.value) }}
+            </td>
+        </tr>
+        <tr class="v-space"></tr>
+        <tr v-for="item in stats.items">
+            <th :class="{ sorted: sortingItem === item.name }"
+                @click="sortingItem = item.name"
+                class="sortable">
+                {{ formatItem(item.name) }}
+            </th>
+            <td :class="{ sorted: (sortingUser === 'total' && userSortable) || sortingItem === item.name }">
+                {{ formatValue(item.name, item.total) }}
+            </td>
+            <td class="h-space"></td>
+            <td v-for="user in item.users"
+                :class="{ null: user.value === 0,
+                sorted: (sortingUser === user.uuid && userSortable) || sortingItem === item.name }">
+                {{ formatValue(item.name, user.value) }}
             </td>
         </tr>
         </tbody>
@@ -25,68 +55,72 @@
 </template>
 
 <script>
+    import Stats from "@/stats/stats";
+
     export default {
         name: "Stats",
+        data: function()
+        {
+            return {
+                stats: new Stats(this.users),
+                sortingUser: "total",
+                sortingItem: "total"
+            }
+        },
         props: {
             users: Array,
             category: String,
         },
         computed: {
-            stats: function()
+            userSortable: function()
             {
-                if(this.users.length === 0)
-                    return null;
-
-                let stats = {
-                    total: {
-                        total: 0
-                    }
-                };
-
-                for(const user of this.users)
-                    stats.total[user.uuid] = 0;
-
-                for(const user of this.users)
-                    for(const item in user.stats[this.category])
-                        if(!stats.hasOwnProperty(item))
-                        {
-                            stats[item] = {};
-                            stats[item].total = 0;
-
-                            for(const user of this.users)
-                            {
-                                if(!user.stats.hasOwnProperty(this.category))
-                                    user.stats[this.category] = {};
-
-                                let value = user.stats[this.category][item];
-                                if(value === undefined)
-                                    value = 0;
-
-                                stats[item][user.uuid] = value;
-                                stats[item].total += value;
-                                stats.total[user.uuid] += value;
-                                stats.total.total += value;
-                            }
-                        }
-
-                if(this.category === "minecraft:custom")
-                    delete stats.total;
-
-                return stats;
+                return this.category !== "minecraft:custom";
             }
         },
-
-        methods: {
-            formatKey: function(key)
+        watch: {
+            users: function()
             {
-                return key.replace("minecraft:", "")
+                this.init();
+            },
+            category: function(value)
+            {
+                this.stats.update(value);
+
+                this.sortingItem = "total";
+                this.stats.sortByItem(this.sortingItem);
+
+                if(this.userSortable)
+                    this.stats.sortByUser(this.sortingUser);
+            },
+            sortingItem: function(value)
+            {
+                this.stats.sortByItem(value);
+            },
+            sortingUser: function(value)
+            {
+                if(this.userSortable)
+                    this.stats.sortByUser(value);
+            }
+        },
+        methods: {
+            init: function()
+            {
+                this.stats = new Stats(this.users);
+                this.stats.update(this.category);
+                this.stats.sortByItem(this.sortingItem);
+                if(this.userSortable)
+                    this.stats.sortByUser(this.sortingUser);
+            },
+            formatItem: function(name)
+            {
+                return name.replace("minecraft:", "")
                     .replace("one_cm", "distance")
                     .replace("one_minute", "time")
                     .replace(/_/g, " ");
             },
-            formatValue: function(key, value)
+            formatValue: function(name, value)
             {
-                switch(key)
+                switch(name)
                 {
                     case "minecraft:play_one_minute":
                     case "minecraft:time_since_death":
@@ -126,21 +160,47 @@
                         return value.toLocaleString();
                 }
             }
+
+        },
+        created: function()
+        {
+            this.init();
         }
     }
 </script>
 
 <style scoped>
-    th
+    th, td
     {
-        background-color: lightcoral;
-        font-weight: bold;
-        color: white;
+        white-space: nowrap;
+        padding: 8px;
     }
 
-    th.total
+    th
+    {
+        font-weight: normal;
+        background-color: lightcoral;
+        color: white;
+        border: 2px solid transparent;
+    }
+
+    th.sortable
+    {
+        cursor: pointer;
+    }
+
+    th.sortable:hover:not(.sorted)
     {
         background-color: indianred;
+    }
+
+    th.sorted
+    {
+        color: darkred;
+        background-color: pink;
+        border: 2px solid indianred;
+        font-weight: bold;
+        cursor: default;
     }
 
     td
@@ -148,9 +208,9 @@
         background-color: whitesmoke;
     }
 
-    td.total
+    td.sorted
     {
-        background-color: navajowhite;
+        background-color: papayawhip;
         font-weight: bold;
     }
 
@@ -159,19 +219,26 @@
         background: none;
     }
 
-    td.null:not(.total)
+    td.null:not(.sorted)
     {
         color: #ddd;
     }
 
-    th, td
+    .v-space
     {
-        padding: 10px;
+        height: 10px;
+    }
+
+    .h-space
+    {
+        min-width: 10px;
+        padding: 0;
+        background: none;
     }
 
     .online
     {
-        margin-left: 8px;
+        margin-left: 3px;
         height: 10px;
         width: 10px;
         background-color: lightgreen;
