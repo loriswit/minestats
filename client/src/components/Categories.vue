@@ -39,24 +39,11 @@
         grid-template-columns: 33.33% 33.33% 33.33%;
     }
 
-    button
-    {
-        background: mediumseagreen;
-    }
-
-    @media (max-width: 1024px)
-    {
-        nav
-        {
-            grid-template-columns: 50% 50%;
-        }
-    }
-
     @media (max-width: 767px)
     {
         nav
         {
-            grid-template-columns: 100%;
+            grid-template-columns: 50% 50%;
         }
     }
 </style>

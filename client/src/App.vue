@@ -24,9 +24,11 @@
 </script>
 
 <style>
+    @import url("https://fonts.googleapis.com/css?family=Open+Sans");
+
     #app
     {
-        font-family: 'Avenir', Helvetica, Arial, sans-serif;
+        font-family: "Open Sans", sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         text-align: center;
@@ -46,18 +48,17 @@
 
     button
     {
-        min-height: 40px;
-        min-width: 150px;
+        font-family: "Open Sans", sans-serif;
+        font-size: 1em;
         color: white;
         background: mediumseagreen;
         border: 2px solid transparent;
         cursor: pointer;
 
-        font-size: 1em;
+        min-height: 40px;
+        min-width: 150px;
         padding: 5px;
         margin: 5px;
-
-        transition: all 0.5s cubic-bezier(0, 1, 0.5, 1);
     }
 
     button:focus
@@ -67,12 +68,7 @@
 
     button:hover
     {
-        transform: scale(1.05);
-    }
-
-    button:active
-    {
-        transform: scale(0.95);
+        background-color: seagreen;
     }
 
     button.active

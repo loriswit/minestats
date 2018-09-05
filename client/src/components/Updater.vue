@@ -1,6 +1,6 @@
 <template>
     <div class="updater">
-        <button @click="update()">update now</button>
+        <button @click="update()" :class="{ updating: updating }">update now</button>
         <p v-if="error" class="error">{{ error }}</p>
         <p v-if="date">updated
             <timeago :datetime="date" :auto-update="true"/>
@@ -17,6 +17,7 @@
 
             return {
                 date: dateStr ? parseInt(dateStr) : null,
+                updating: false,
                 error: ""
             };
         },
@@ -24,6 +25,7 @@
             update: function()
             {
                 const url = "https://" + this.$root.server;
+                this.updating = true;
                 this.$http.get(url + "/status").then(response =>
                 {
                     let onlinePlayers = [];
@@ -45,6 +47,8 @@
                                 if(++index === users.length)
                                 {
                                     this.error = "";
+                                    this.updating = false;
+
                                     this.date = Date.now();
                                     this.$root.users = users;
 
@@ -55,7 +59,8 @@
                     });
                 }, () =>
                 {
-                    this.error = "update failed.";
+                    this.error = "update failed";
+                    this.updating = false;
                 });
             }
         },
@@ -89,5 +94,15 @@
     button
     {
         background-color: steelblue;
+    }
+
+    button:hover
+    {
+        background-color: royalblue;
+    }
+
+    button.updating
+    {
+        background-color: grey;
     }
 </style>
