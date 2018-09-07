@@ -7,7 +7,7 @@ Vue.config.productionTip = false;
 
 let data = {
     server: "olybri.serveminecraft.net",
-    category: "minecraft:custom",
+    category: "minecraft:custom:general",
     users: [],
 };
 

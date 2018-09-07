@@ -14,11 +14,15 @@ export default class Stats
         this.items = [];
         this.total = new Item("total", this.users);
 
+        const type = category.match(/^[^:]+:[^:]+/)[0];
         for(const user of this.users)
-            for(const itemName in user.stats[category])
+            for(const itemName in user.stats[type])
             {
+                if(!Stats.itemInCategory(itemName, category))
+                    continue;
+
                 const item = this.putItem(itemName);
-                const value = user.stats[category][itemName];
+                const value = user.stats[type][itemName];
 
                 item.total += value;
                 item.getUser(user.uuid).value += value;
@@ -27,16 +31,11 @@ export default class Stats
                 this.total.getUser(user.uuid).value += value;
             }
 
-        // if custom stats, replace total with play time
-        if(category === "minecraft:custom")
-        {
-            const substitution = "minecraft:play_one_minute";
-            this.total = this.getItem(substitution);
-            this.items = this.items.filter(function(item)
-            {
-                return item.name !== substitution;
-            })
-        }
+        // if mixed stats, remove total
+        if(category === "minecraft:custom:general")
+            this.substituteTotal("minecraft:play_one_minute")
+        if(category === "minecraft:custom:combat")
+            this.substituteTotal("minecraft:mob_kills")
     }
 
     sortByUser(uuid)
@@ -69,6 +68,15 @@ export default class Stats
         });
     }
 
+    substituteTotal(substitution)
+    {
+        this.total = this.getItem(substitution);
+        this.items = this.items.filter(function(item)
+        {
+            return item.name !== substitution;
+        });
+    }
+
     putItem(name)
     {
         const item = this.getItem(name);
@@ -88,5 +96,23 @@ export default class Stats
         {
             return item.name === name;
         });
+    }
+
+    static itemInCategory(itemName, category)
+    {
+        if(!/^minecraft:custom/.test(category))
+            return true;
+
+        const regexes = {
+            "minecraft:custom:distance": /:.+_one_cm$/,
+            "minecraft:custom:combat": /:(damage_.+|.+_kills)/,
+            "minecraft:custom:interaction": /:(interact|inspect|open|trigger|fill|use|clean|enchant|traded|talked)_/
+        };
+
+        for(const key in regexes)
+            if(regexes[key].test(itemName))
+                return category === key;
+
+        return category === "minecraft:custom:general";
     }
 }

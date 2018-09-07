@@ -14,7 +14,10 @@
         {
             return {
                 categories: {
-                    "minecraft:custom": "custom",
+                    "minecraft:custom:general": "general",
+                    "minecraft:custom:distance": "distance",
+                    "minecraft:custom:interaction": "interaction",
+                    "minecraft:custom:combat": "combat",
                     "minecraft:killed": "mobs killed",
                     "minecraft:killed_by": "killed by mobs",
                     "minecraft:mined": "mined",

@@ -74,7 +74,7 @@
         computed: {
             userSortable: function()
             {
-                return this.category !== "minecraft:custom";
+                return this.stats.total.name === "total";
             }
         },
         watch: {
@@ -120,6 +120,19 @@
             },
             formatValue: function(name, value)
             {
+                if(this.category === "minecraft:custom:distance")
+                    if(value < 100)
+                        return value + " cm";
+                    else if(value < 100000)
+                        return (value / 100).toFixed(1) + " m";
+                    else if(value < 100000000)
+                        return (value / 100000).toFixed(1).toLocaleString() + " km";
+                    else
+                        return Math.floor(value / 100000).toLocaleString() + " km";
+
+                if(/:damage_/.test(name))
+                    return Math.floor(value / 20).toLocaleString() + " ♡";
+
                 switch(name)
                 {
                     case "minecraft:play_one_minute":
@@ -132,38 +145,6 @@
                             return Math.floor(value / 1200 % 60) + " min";
                         else
                             return Math.floor(value / 72000) + " hrs";
-
-                    case "minecraft:walk_one_cm":
-                    case "minecraft:crouch_one_cm":
-                    case "minecraft:sprint_one_cm":
-                    case "minecraft:swim_one_cm":
-                    case "minecraft:fall_one_cm":
-                    case "minecraft:climb_one_cm":
-                    case "minecraft:fly_one_cm":
-                    case "minecraft:walk_under_water_one_cm":
-                    case "minecraft:boat_one_cm":
-                    case "minecraft:minecart_one_cm":
-                    case "minecraft:pig_one_cm":
-                    case "minecraft:horse_one_cm":
-                    case "minecraft:aviate_one_cm":
-                    case "minecraft:walk_on_water_one_cm":
-                        if(value < 100)
-                            return value + " cm";
-                        else if(value < 100000)
-                            return (value / 100).toFixed(1) + " m";
-                        else if(value < 100000000)
-                            return (value / 100000).toFixed(1).toLocaleString() + " km";
-                        else
-                            return Math.floor(value / 100000).toLocaleString() + " km";
-
-                    case "minecraft:damage_dealt":
-                    case "minecraft:damage_dealt_absorbed":
-                    case "minecraft:damage_dealt_resisted":
-                    case "minecraft:damage_taken":
-                    case "minecraft:damage_absorbed":
-                    case "minecraft:damage_resisted":
-                    case "minecraft:damage_blocked_by_shield":
-                        return Math.floor(value / 20).toLocaleString() + " ♡";
 
                     default:
                         return value.toLocaleString();
