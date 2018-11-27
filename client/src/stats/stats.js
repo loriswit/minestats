@@ -13,9 +13,11 @@ export default class Stats
     {
         this.items = [];
         this.total = new Item("total", this.users);
+        this.eachHour = new Item("every_hour", this.users);
 
         const type = category.match(/^[^:]+:[^:]+/)[0];
         for(const user of this.users)
+        {
             for(const itemName in user.stats[type])
             {
                 if(!Stats.itemInCategory(itemName, category))
@@ -31,11 +33,19 @@ export default class Stats
                 this.total.getUser(user.uuid).value += value;
             }
 
+            const eachHour =
+                this.total.getUser(user.uuid).value /
+                (user.stats["minecraft:custom"]["minecraft:play_one_minute"] / 72000);
+
+            this.eachHour.total += eachHour;
+            this.eachHour.getUser(user.uuid).value = eachHour;
+        }
+
         // if mixed stats, remove total
         if(category === "minecraft:custom:general")
-            this.substituteTotal("minecraft:play_one_minute")
+            this.substituteTotal("minecraft:play_one_minute");
         if(category === "minecraft:custom:combat")
-            this.substituteTotal("minecraft:mob_kills")
+            this.substituteTotal("minecraft:mob_kills");
     }
 
     sortByUser(uuid)
@@ -58,6 +68,12 @@ export default class Stats
 
         if(sortingItem !== this.total)
             this.total.users.sort(function(a, b)
+            {
+                return sortingItem.getUser(b.uuid).value - sortingItem.getUser(a.uuid).value;
+            });
+
+        if(sortingItem !== this.eachHour)
+            this.eachHour.users.sort(function(a, b)
             {
                 return sortingItem.getUser(b.uuid).value - sortingItem.getUser(a.uuid).value;
             });
@@ -91,6 +107,9 @@ export default class Stats
     {
         if(name === "total")
             return this.total;
+
+        if(name === this.eachHour.name)
+            return this.eachHour;
 
         return this.items.find(function(item)
         {

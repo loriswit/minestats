@@ -9,18 +9,18 @@
 </template>
 
 <script>
-    import Stats from "./components/Stats.vue"
-    import Updater from "./components/Updater.vue"
-    import Categories from "./components/Categories.vue"
+import Stats from "./components/Stats.vue"
+import Updater from "./components/Updater.vue"
+import Categories from "./components/Categories.vue"
 
-    export default {
-        name: 'app',
-        components: {
-            categories: Categories,
-            stats: Stats,
-            updater: Updater
-        },
-    }
+export default {
+    name: 'app',
+    components: {
+        categories: Categories,
+        stats: Stats,
+        updater: Updater
+    },
+}
 </script>
 
 <style>

@@ -8,28 +8,28 @@
 </template>
 
 <script>
-    export default {
-        name: "Categories",
-        data: function()
-        {
-            return {
-                categories: {
-                    "minecraft:custom:general": "general",
-                    "minecraft:custom:distance": "distance",
-                    "minecraft:custom:interaction": "interaction",
-                    "minecraft:custom:combat": "combat",
-                    "minecraft:killed": "mobs killed",
-                    "minecraft:killed_by": "killed by mobs",
-                    "minecraft:mined": "mined",
-                    "minecraft:crafted": "crafted",
-                    "minecraft:used": "used",
-                    "minecraft:broken": "broken",
-                    "minecraft:dropped": "dropped",
-                    "minecraft:picked_up": "picked up"
-                }
-            };
-        },
-    }
+export default {
+    name: "Categories",
+    data: function()
+    {
+        return {
+            categories: {
+                "minecraft:custom:general": "general",
+                "minecraft:custom:distance": "distance",
+                "minecraft:custom:interaction": "interaction",
+                "minecraft:custom:combat": "combat",
+                "minecraft:killed": "mobs killed",
+                "minecraft:killed_by": "killed by mobs",
+                "minecraft:mined": "mined",
+                "minecraft:crafted": "crafted",
+                "minecraft:used": "used",
+                "minecraft:broken": "broken",
+                "minecraft:dropped": "dropped",
+                "minecraft:picked_up": "picked up"
+            }
+        };
+    },
+}
 </script>
 
 <style scoped>
