@@ -33,6 +33,21 @@
                 {{ formatValue(stats.total.name, user.value) }}
             </td>
         </tr>
+        <tr v-if="userSortable">
+            <th :class="{ sorted: sortingItem === stats.eachHour.name }"
+                @click="sortingItem = stats.eachHour.name"
+                class="sortable">
+                {{ formatItem(stats.eachHour.name) }}
+            </th>
+            <td :class="{ sorted: sortingUser === 'total' || sortingItem === stats.eachHour.name }">
+                {{ formatValue(stats.eachHour.name, stats.eachHour.total) }}
+            </td>
+            <td class="h-space"></td>
+            <td v-for="user in stats.eachHour.users"
+                :class="{ sorted: sortingUser === user.uuid || sortingItem === stats.eachHour.name }">
+                {{ formatValue(stats.eachHour.name, user.value) }}
+            </td>
+        </tr>
         <tr class="v-space"></tr>
         <tr v-for="item in stats.items">
             <th :class="{ sorted: sortingItem === item.name }"
@@ -55,108 +70,110 @@
 </template>
 
 <script>
-    import Stats from "@/stats/stats";
+import Stats from "@/stats/stats";
 
-    export default {
-        name: "Stats",
-        data: function()
+export default {
+    name: "Stats",
+    data: function()
+    {
+        return {
+            stats: new Stats(this.users),
+            sortingUser: "total",
+            sortingItem: "total"
+        }
+    },
+    props: {
+        users: Array,
+        category: String,
+    },
+    computed: {
+        userSortable: function()
         {
-            return {
-                stats: new Stats(this.users),
-                sortingUser: "total",
-                sortingItem: "total"
-            }
-        },
-        props: {
-            users: Array,
-            category: String,
-        },
-        computed: {
-            userSortable: function()
-            {
-                return this.stats.total.name === "total";
-            }
-        },
-        watch: {
-            users: function()
-            {
-                this.init();
-            },
-            category: function(value)
-            {
-                this.stats.update(value);
-
-                this.sortingItem = "total";
-                this.stats.sortByItem(this.sortingItem);
-
-                if(this.userSortable)
-                    this.stats.sortByUser(this.sortingUser);
-            },
-            sortingItem: function(value)
-            {
-                this.stats.sortByItem(value);
-            },
-            sortingUser: function(value)
-            {
-                if(this.userSortable)
-                    this.stats.sortByUser(value);
-            }
-        },
-        methods: {
-            init: function()
-            {
-                this.stats = new Stats(this.users);
-                this.stats.update(this.category);
-                this.stats.sortByItem(this.sortingItem);
-                if(this.userSortable)
-                    this.stats.sortByUser(this.sortingUser);
-            },
-            formatItem: function(name)
-            {
-                return name.replace("minecraft:", "")
-                    .replace("one_cm", "distance")
-                    .replace("one_minute", "time")
-                    .replace(/_/g, " ");
-            },
-            formatValue: function(name, value)
-            {
-                if(this.category === "minecraft:custom:distance")
-                    if(value < 100)
-                        return value + " cm";
-                    else if(value < 100000)
-                        return (value / 100).toFixed(1) + " m";
-                    else if(value < 100000000)
-                        return (value / 100000).toFixed(1).toLocaleString() + " km";
-                    else
-                        return Math.floor(value / 100000).toLocaleString() + " km";
-
-                if(/:damage_/.test(name))
-                    return Math.floor(value / 20).toLocaleString() + " ♡";
-
-                switch(name)
-                {
-                    case "minecraft:play_one_minute":
-                    case "minecraft:time_since_death":
-                    case "minecraft:sneak_time":
-                    case "minecraft:time_since_rest":
-                        if(value < 1200)
-                            return Math.floor(value / 20 % 60) + " sec";
-                        else if(value < 72000)
-                            return Math.floor(value / 1200 % 60) + " min";
-                        else
-                            return Math.floor(value / 72000) + " hrs";
-
-                    default:
-                        return value.toLocaleString();
-                }
-            }
-
-        },
-        created: function()
+            return this.stats.total.name === "total";
+        }
+    },
+    watch: {
+        users: function()
         {
             this.init();
+        },
+        category: function(value)
+        {
+            this.stats.update(value);
+
+            if(!this.userSortable || this.sortingItem !== this.stats.eachHour.name)
+                this.sortingItem = "total";
+
+            this.stats.sortByItem(this.sortingItem);
+
+            if(this.userSortable)
+                this.stats.sortByUser(this.sortingUser);
+        },
+        sortingItem: function(value)
+        {
+            this.stats.sortByItem(value);
+        },
+        sortingUser: function(value)
+        {
+            if(this.userSortable)
+                this.stats.sortByUser(value);
         }
+    },
+    methods: {
+        init: function()
+        {
+            this.stats = new Stats(this.users);
+            this.stats.update(this.category);
+            this.stats.sortByItem(this.sortingItem);
+            if(this.userSortable)
+                this.stats.sortByUser(this.sortingUser);
+        },
+        formatItem: function(name)
+        {
+            return name.replace("minecraft:", "")
+                .replace("one_cm", "distance")
+                .replace("one_minute", "time")
+                .replace(/_/g, " ");
+        },
+        formatValue: function(name, value)
+        {
+            if(this.category === "minecraft:custom:distance")
+                if(value < 100)
+                    return value + " cm";
+                else if(value < 100000)
+                    return (value / 100).toFixed(1) + " m";
+                else if(value < 100000000)
+                    return (value / 100000).toFixed(1).toLocaleString() + " km";
+                else
+                    return Math.floor(value / 100000).toLocaleString() + " km";
+
+            if(/:damage_/.test(name))
+                return Math.floor(value / 20).toLocaleString() + " ♡";
+
+            switch(name)
+            {
+                case "minecraft:play_one_minute":
+                case "minecraft:time_since_death":
+                case "minecraft:sneak_time":
+                case "minecraft:time_since_rest":
+                    if(value < 1200)
+                        return Math.floor(value / 20 % 60) + " sec";
+                    else if(value < 72000)
+                        return Math.floor(value / 1200 % 60) + " min";
+                    else
+                        return Math.floor(value / 72000) + " hrs";
+
+                default:
+                    return Math.round(value).toLocaleString();
+            }
+        }
+
+    },
+    created: function()
+    {
+        this.init();
     }
+}
 </script>
 
 <style scoped>
