@@ -43,6 +43,7 @@
     "not ie <= 8"
   ],
   "vue": {
+    "productionSourceMap": false,
     "baseUrl": "./"
   }
 }
