@@ -1,17 +1,20 @@
 <?php
 
+use Slim\App;
+use Slim\Container;
+use Slim\Handlers\Strategies\RequestResponseArgs;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
 define("CONFIG", json_decode(file_get_contents(__DIR__ . "/../config.json"), true));
 
-$container = new \Slim\Container();
+$container = new Container();
 
 $container["settings"]["displayErrorDetails"] = false;
 
 $container["foundHandler"] = function()
 {
-    return new \Slim\Handlers\Strategies\RequestResponseArgs();
+    return new RequestResponseArgs();
 };
 
 $container["notFoundHandler"] = function($c)
@@ -22,7 +25,7 @@ $container["notFoundHandler"] = function($c)
     };
 };
 
-$app = new \Slim\App($container);
+$app = new App($container);
 
 // redirect paths with a trailing slash
 $app->add(function(Request $request, Response $response, callable $next)

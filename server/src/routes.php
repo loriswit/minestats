@@ -1,5 +1,6 @@
 <?php
 
+use Slim\Exception\NotFoundException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -9,7 +10,7 @@ function withFile(Request $request, Response $response, $filename, $root)
 {
     $content = @file_get_contents("$root/$filename");
     if($content === false)
-        throw new \Slim\Exception\NotFoundException($request, $response);
+        throw new NotFoundException($request, $response);
     
     return $response->write($content);
 }
@@ -51,10 +52,10 @@ $app->get("/users", function(Request $request, Response $response)
 
 $app->get("/stats/{uuid}", function(Request $request, Response $response, $uuid)
 {
-    return withJsonFile($request, $response, "world/stats/$uuid.json");
+    return withJsonFile($request, $response, CONFIG["server"]["world"] . "/stats/$uuid.json");
 });
 
 $app->get("/advancements/{uuid}", function(Request $request, Response $response, $uuid)
 {
-    return withJsonFile($request, $response, "world/advancements/$uuid.json");
+    return withJsonFile($request, $response, CONFIG["server"]["world"] . "/advancements/$uuid.json");
 });

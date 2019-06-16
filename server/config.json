@@ -1,6 +1,7 @@
 {
   "server": {
     "root": "path/to/server",
+    "world": "world",
     "host": "localhost",
     "port": 25565
   }
