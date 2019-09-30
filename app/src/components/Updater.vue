@@ -24,7 +24,7 @@ export default {
         };
     },
     methods: {
-        update: function()
+        update()
         {
             const url = this.$root.server;
             this.updating = true;
@@ -39,6 +39,8 @@ export default {
                 this.$http.get(url + "/users").then(response =>
                 {
                     const users = response.body;
+                    const invalidUsers = [];
+
                     let index = 0;
                     for(let user of users)
                         this.$http.get(url + "/stats/" + user.uuid).then(response =>
@@ -47,16 +49,12 @@ export default {
                             user.stats = response.body.stats;
 
                             if(++index === users.length)
-                            {
-                                this.error = "";
-                                this.updating = false;
+                                this.onUpdateFinished(users, invalidUsers)
+                        }, () => {
+                            invalidUsers.push(user);
 
-                                this.date = Date.now();
-                                this.$root.users = users;
-
-                                window.localStorage.setItem("users", JSON.stringify(this.$root.users));
-                                window.localStorage.setItem("date", this.date.toString());
-                            }
+                            if(++index === users.length)
+                                this.onUpdateFinished(users, invalidUsers)
                         });
                 });
             }, () =>
@@ -64,9 +62,25 @@ export default {
                 this.error = "update failed";
                 this.updating = false;
             });
+        },
+        onUpdateFinished(users, invalidUsers)
+        {
+            for(const user of invalidUsers) {
+                const index = users.indexOf(user);
+                users.splice(index, 1);
+            }
+
+            this.error = "";
+            this.updating = false;
+
+            this.date = Date.now();
+            this.$root.users = users;
+
+            window.localStorage.setItem("users", JSON.stringify(this.$root.users));
+            window.localStorage.setItem("date", this.date.toString());
         }
     },
-    created: function()
+    created()
     {
         this.update();
     }

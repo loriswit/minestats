@@ -15,7 +15,7 @@ const userData = window.localStorage.getItem("users");
 if(userData != null)
     data.users = JSON.parse(userData);
 
-Vue.use(VueTimeago);
+Vue.use(VueTimeago, {locale: "en"});
 Vue.use(VueResource);
 
 new Vue({
