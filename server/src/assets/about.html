@@ -5,23 +5,33 @@
     <meta name=viewport content="width=device-width,initial-scale=1">
     <title>minestats/server</title>
     <style>
-        body {
+        body
+        {
             font-family: sans-serif;
             text-align: center;
         }
-        main {
+
+        main
+        {
             display: inline-block;
         }
-        h2 {
+
+        h2
+        {
             text-align: left;
             padding-left: 10px;
         }
-        table {
+
+        table
+        {
+            width: 100%;
             text-align: left;
             border-collapse: separate;
             border-spacing: 2px;
         }
-        td {
+
+        td
+        {
             vertical-align: center;
             background-color: whitesmoke;
             padding: 10px;
@@ -44,15 +54,28 @@
                     <td>get the latest logs</td>
                 </tr>
                 <tr>
-                    <td><code>GET /users</code></td>
+                    <td><code>GET /archived</code></td>
+                    <td>get a list of archived servers</td>
+                </tr>
+                <tr>
+                    <td>
+                        <code>GET /users</code><br>
+                        <code>GET /archived/{server}/users</code>
+                    </td>
                     <td>get a list of all players</td>
                 </tr>
                 <tr>
-                    <td><code>GET /stats/{uuid}</code></td>
+                    <td>
+                        <code>GET /stats/{uuid}</code><br>
+                        <code>GET /archived/{server}/stats/{uuid}</code>
+                    </td>
                     <td>get the statistics of a specific player</td>
                 </tr>
                 <tr>
-                    <td><code>GET /advancements/{uuid}</code></td>
+                    <td>
+                        <code>GET /advancements/{uuid}</code><br>
+                        <code>GET /archived/{server}/advancements/{uuid}</code>
+                    </td>
                     <td>get the advancements of a specific player</td>
                 </tr>
             </table>
@@ -67,7 +90,7 @@
                 </tr>
                 <tr>
                     <td>demo</td>
-                    <td><a href="http://stats.mc.loriswit.com/">super chouette</a></td>
+                    <td><a href="http://stats.mc.loriswit.com/">online client</a></td>
                 </tr>
             </table>
         </section>
