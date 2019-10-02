@@ -2,6 +2,8 @@
 
 function getStatus()
 {
+    $status = ["name" => CONFIG["server"]["name"], "status" => "offline"];
+    
     $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
     socket_set_option($socket, SOL_SOCKET, SO_SNDTIMEO, array("sec" => 5, "usec" => 0));
     socket_set_option($socket, SOL_SOCKET, SO_RCVTIMEO, array("sec" => 5, "usec" => 0));
@@ -9,11 +11,12 @@ function getStatus()
     $host = CONFIG["server"]["host"];
     $port = CONFIG["server"]["port"];
     if(@socket_connect($socket, $host, $port) === false)
-        return ["status" => "offline"];
+        return $status;
     
     else
     {
-        $handshake = pack("cccca*nccc", 0, 145, 03, strlen($host), $host, $port, 1, 1, 0);
+        // protocol version 498
+        $handshake = pack("cccca*nccc", 0, 242, 3, strlen($host), $host, $port, 1, 1, 0);
         $handshake = chr(strlen($handshake) - 2) . $handshake;
         socket_write($socket, $handshake);
         
@@ -25,7 +28,10 @@ function getStatus()
         
         socket_recv($socket, $json, $size, MSG_WAITALL);
         $info = json_decode($json, true);
-        $status = ["status" => "online", "info" => $info];
+        
+        $status["status"] = "online";
+        $status["info"] = $info;
+        
         return $status;
     }
 }
