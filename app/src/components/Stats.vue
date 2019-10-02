@@ -9,7 +9,8 @@
                 total
             </th>
             <td class="h-space"></td>
-            <th v-for="user in stats.total.users" :title="user.online ? 'online' : null"
+            <th v-for="user in stats.total.users" :key="user.uuid"
+                :title="user.online ? 'online' : null"
                 :class="{ sorted: sortingUser === user.uuid && userSortable, sortable: userSortable }"
                 @click="sortingUser = user.uuid">
                 {{ user.name }}
@@ -28,7 +29,7 @@
                 {{ formatValue(stats.total.name, stats.total.total) }}
             </td>
             <td class="h-space"></td>
-            <td v-for="user in stats.total.users"
+            <td v-for="user in stats.total.users" :key="user.uuid"
                 :class="{ sorted: (sortingUser === user.uuid && userSortable) || sortingItem === 'total' }">
                 {{ formatValue(stats.total.name, user.value) }}
             </td>
@@ -43,13 +44,13 @@
                 {{ formatValue(stats.eachHour.name, stats.eachHour.total) }}
             </td>
             <td class="h-space"></td>
-            <td v-for="user in stats.eachHour.users"
+            <td v-for="user in stats.eachHour.users" :key="user.uuid"
                 :class="{ sorted: sortingUser === user.uuid || sortingItem === stats.eachHour.name }">
                 {{ formatValue(stats.eachHour.name, user.value) }}
             </td>
         </tr>
         <tr class="v-space"></tr>
-        <tr v-for="item in stats.items">
+        <tr v-for="item in stats.items" :key="item.name">
             <th :class="{ sorted: sortingItem === item.name }"
                 @click="sortingItem = item.name"
                 class="sortable">
@@ -59,7 +60,7 @@
                 {{ formatValue(item.name, item.total) }}
             </td>
             <td class="h-space"></td>
-            <td v-for="user in item.users"
+            <td v-for="user in item.users" :key="user.uuid"
                 :class="{ null: user.value === 0,
                 sorted: (sortingUser === user.uuid && userSortable) || sortingItem === item.name }">
                 {{ formatValue(item.name, user.value) }}
@@ -74,7 +75,7 @@ import Stats from "@/stats/stats";
 
 export default {
     name: "Stats",
-    data: function()
+    data()
     {
         return {
             stats: new Stats(this.users),
@@ -87,17 +88,17 @@ export default {
         category: String,
     },
     computed: {
-        userSortable: function()
+        userSortable()
         {
             return this.stats.total.name === "total";
         }
     },
     watch: {
-        users: function()
+        users()
         {
             this.init();
         },
-        category: function(value)
+        category(value)
         {
             this.stats.update(value);
 
@@ -109,18 +110,18 @@ export default {
             if(this.userSortable)
                 this.stats.sortByUser(this.sortingUser);
         },
-        sortingItem: function(value)
+        sortingItem(value)
         {
             this.stats.sortByItem(value);
         },
-        sortingUser: function(value)
+        sortingUser(value)
         {
             if(this.userSortable)
                 this.stats.sortByUser(value);
         }
     },
     methods: {
-        init: function()
+        init()
         {
             this.stats = new Stats(this.users);
             this.stats.update(this.category);
@@ -128,14 +129,14 @@ export default {
             if(this.userSortable)
                 this.stats.sortByUser(this.sortingUser);
         },
-        formatItem: function(name)
+        formatItem(name)
         {
             return name.replace("minecraft:", "")
                 .replace("one_cm", "distance")
                 .replace("one_minute", "time")
                 .replace(/_/g, " ");
         },
-        formatValue: function(name, value)
+        formatValue(name, value)
         {
             if(this.category === "minecraft:custom:distance")
                 if(value < 100)
@@ -169,7 +170,7 @@ export default {
         }
 
     },
-    created: function()
+    created()
     {
         this.init();
     }
