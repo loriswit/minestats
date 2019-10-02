@@ -86,4 +86,12 @@ export default {
     {
         margin: 20px auto auto;
     }
+
+    @media (max-width: 767px)
+    {
+        header > :first-child
+        {
+            order: 2;
+        }
+    }
 </style>

@@ -1,6 +1,6 @@
 <template>
     <nav>
-        <button v-for="(name, category) in categories"
+        <button v-for="(name, category) in categories" :key="name"
                 @click="$root.category = category"
                 :class="{ active: $root.category === category }">{{ name }}
         </button>
@@ -10,7 +10,7 @@
 <script>
 export default {
     name: "Categories",
-    data: function()
+    data()
     {
         return {
             categories: {
