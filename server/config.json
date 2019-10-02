@@ -1,8 +1,19 @@
 {
   "server": {
+    "name": "server_name",
     "root": "path/to/server",
     "world": "world",
     "host": "localhost",
     "port": 25565
+  },
+  "archived": {
+    "server_1": {
+      "root": "path/to/server",
+      "world": "world"
+    },
+    "server_2": {
+      "root": "path/to/server",
+      "world": "world"
+    }
   }
 }

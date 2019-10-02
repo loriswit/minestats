@@ -1,34 +1,10 @@
 <?php
 
-use Slim\Exception\NotFoundException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
 require "status.php";
-
-function withFile(Request $request, Response $response, $filename, $root)
-{
-    $content = @file_get_contents("$root/$filename");
-    if($content === false)
-        throw new NotFoundException($request, $response);
-    
-    return $response->write($content);
-}
-
-function withHtmlFile(Request $request, Response $response, $filename, $root = CONFIG["server"]["root"])
-{
-    return withFile($request, $response, $filename, $root)->withHeader("Content-type", "text/html");
-}
-
-function withTextFile(Request $request, Response $response, $filename, $root = CONFIG["server"]["root"])
-{
-    return withFile($request, $response, $filename, $root)->withHeader("Content-type", "text/plain");
-}
-
-function withJsonFile(Request $request, Response $response, $filename, $root = CONFIG["server"]["root"])
-{
-    return withFile($request, $response, $filename, $root)->withHeader("Content-type", "application/json");
-}
+require "helpers.php";
 
 $app->get("/", function(Request $request, Response $response)
 {
@@ -58,4 +34,30 @@ $app->get("/stats/{uuid}", function(Request $request, Response $response, $uuid)
 $app->get("/advancements/{uuid}", function(Request $request, Response $response, $uuid)
 {
     return withJsonFile($request, $response, CONFIG["server"]["world"] . "/advancements/$uuid.json");
+});
+
+$app->get("/archived", function(Request $request, Response $response)
+{
+    return $response->withJson(array_keys(CONFIG["archived"]));
+});
+
+$app->group("/archived/{name}", function()
+{
+    $this->get("/users", function(Request $request, Response $response, $name)
+    {
+        $server = CONFIG["archived"][$name];
+        return withJsonFile($request, $response, "usercache.json", $server["root"]);
+    });
+    
+    $this->get("/stats/{uuid}", function(Request $request, Response $response, $name, $uuid)
+    {
+        $server = CONFIG["archived"][$name];
+        return withJsonFile($request, $response, $server["world"] . "/stats/$uuid.json", $server["root"]);
+    });
+    
+    $this->get("/advancements/{uuid}", function(Request $request, Response $response, $name, $uuid)
+    {
+        $server = CONFIG["archived"][$name];
+        return withJsonFile($request, $response, $server["world"] . "/advancements/$uuid.json", $server["root"]);
+    });
 });
