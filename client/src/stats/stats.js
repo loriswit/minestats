@@ -122,16 +122,21 @@ export default class Stats
         if(!/^minecraft:custom/.test(category))
             return true;
 
-        const regexes = {
-            "minecraft:custom:distance": /:.+_one_cm$/,
-            "minecraft:custom:combat": /:(damage_.+|.+_kills)/,
-            "minecraft:custom:interaction": /:(interact|inspect|open|trigger|fill|use|clean|enchant|traded|talked)_/
-        };
+        if(/:.+_one_cm$/.test(itemName))
+            return category === "minecraft:custom:distance";
 
-        for(const key in regexes)
-            if(regexes[key].test(itemName))
-                return category === key;
+        if(/:(damage_.+|.+_kills)/.test(itemName))
+            return category === "minecraft:custom:combat";
 
-        return category === "minecraft:custom:general";
+        const generalStats = [
+            "leave_game", "play_one_minute", "time_since_death", "sneak_time",
+            "jump", "deaths", "drop", "time_since_rest"
+        ];
+
+        for(const stat of generalStats)
+            if(itemName === "minecraft:" + stat)
+                return category === "minecraft:custom:general";
+
+        return category === "minecraft:custom:interaction";
     }
 }
