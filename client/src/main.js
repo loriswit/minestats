@@ -6,7 +6,7 @@ import VueResource from "vue-resource"
 Vue.config.productionTip = false;
 
 let data = {
-    server: "http://mc.loriswit.com",
+    server: process.env.VUE_APP_API_URL,
     category: "minecraft:custom:general",
     users: [],
 };
