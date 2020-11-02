@@ -5,7 +5,6 @@ export default class Stats
     constructor(users)
     {
         this.users = users;
-        this.items = users.length === 0 ? null : [];
         this.total = new Item("total", this.users);
     }
 

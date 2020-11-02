@@ -78,7 +78,7 @@ export default {
     data()
     {
         return {
-            stats: new Stats(this.users),
+            stats: null,
             sortingUser: "total",
             sortingItem: "total"
         }
@@ -123,6 +123,9 @@ export default {
     methods: {
         init()
         {
+            if(!this.users.length)
+                return;
+
             this.stats = new Stats(this.users);
             this.stats.update(this.category);
             this.stats.sortByItem(this.sortingItem);
