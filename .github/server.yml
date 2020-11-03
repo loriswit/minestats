@@ -1,0 +1,30 @@
+name: Server CI
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - server/**
+  pull_request:
+    branches: [ main ]
+    paths:
+      - server/**
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - working-directory: server
+      run: composer validate
+    - working-directory: server
+      id: composer-cache
+      uses: actions/cache@v2
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-
+    - working-directory: server
+      if: steps.composer-cache.outputs.cache-hit != 'true'
+      run: composer install --prefer-dist --no-progress --no-suggest
