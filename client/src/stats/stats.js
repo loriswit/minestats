@@ -32,9 +32,11 @@ export default class Stats
                 this.total.getUser(user.uuid).value += value;
             }
 
-            const eachHour =
-                this.total.getUser(user.uuid).value /
-                (user.stats["minecraft:custom"]["minecraft:play_one_minute"] / 72000);
+            const playTime =
+                user.stats["minecraft:custom"]["minecraft:play_one_minute"] ??
+                user.stats["minecraft:custom"]["minecraft:play_time"]
+
+            const eachHour = this.total.getUser(user.uuid).value / (playTime / 72000);
 
             this.eachHour.total += eachHour;
             this.eachHour.getUser(user.uuid).value = eachHour;
@@ -42,7 +44,11 @@ export default class Stats
 
         // if mixed stats, remove total
         if(category === "minecraft:custom:general")
-            this.substituteTotal("minecraft:play_one_minute");
+            if(this.items.some(item => item.name === "minecraft:play_one_minute"))
+                this.substituteTotal("minecraft:play_one_minute");
+            else
+                this.substituteTotal("minecraft:play_time");
+
         if(category === "minecraft:custom:combat")
             this.substituteTotal("minecraft:mob_kills");
     }
@@ -128,8 +134,8 @@ export default class Stats
             return category === "minecraft:custom:combat";
 
         const generalStats = [
-            "leave_game", "play_one_minute", "time_since_death", "sneak_time",
-            "jump", "deaths", "drop", "time_since_rest"
+            "leave_game", "play_one_minute", "play_time", "total_world_time", "time_since_death",
+            "sneak_time", "jump", "deaths", "drop", "time_since_rest"
         ];
 
         for(const stat of generalStats)

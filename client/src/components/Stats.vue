@@ -157,6 +157,8 @@ export default {
             switch(name)
             {
                 case "minecraft:play_one_minute":
+                case "minecraft:play_time":
+                case "minecraft:total_world_time":
                 case "minecraft:time_since_death":
                 case "minecraft:sneak_time":
                 case "minecraft:time_since_rest":
@@ -164,6 +166,8 @@ export default {
                         return Math.floor(value / 20 % 60) + " sec";
                     else if(value < 72000)
                         return Math.floor(value / 1200 % 60) + " min";
+                    else if(value < 720000)
+                      return Math.floor(value / 72000) + " h " + Math.floor(value % 72000 / 1200 % 60) + " m";
                     else
                         return Math.floor(value / 72000) + " hrs";
 
